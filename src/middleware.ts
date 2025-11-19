@@ -40,17 +40,20 @@ export default async function middleware(req: NextRequest) {
 
   if (isAuthPublicPage) {
     const token = await getToken({ req });
-    const redirectUrl = new URL("/", req.nextUrl.origin);
 
     if (token) {
+      // User is logged in, redirect to dashboard/home
+      const redirectUrl = new URL("/", req.nextUrl.origin);
       return NextResponse.redirect(redirectUrl);
     }
 
+    // User is not logged in, allow access to login page
     return handleI18nRouting(req);
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (authMiddleware as any)(req);
   }
+
+  // All other pages require authentication
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (authMiddleware as any)(req);
 }
 
 export const config = {

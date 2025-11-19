@@ -12,6 +12,9 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
+import { DeleteDialog } from "@/components/common/delete -dialog";
+import { HiMiniTrash } from "react-icons/hi2";
+import useDeleteSyncJob from "../_hooks/use-delete-sync-job";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -30,10 +33,13 @@ const getStatusColor = (status: string) => {
 
 export default function DashTable({
   syncJobs,
+  showDeleteAction = false,
 }: {
   syncJobs: homeStates["jobs"];
+  showDeleteAction?: boolean;
 }) {
   const t = useTranslations("dashboard");
+  const { DeleteSyncJobAsync } = useDeleteSyncJob();
 
   return (
     <Card className="bg-background max-w-screen-2xl mx-auto rounded-2xl py-6 ">
@@ -76,6 +82,9 @@ export default function DashTable({
                 <TableHead className="text-center font-homenaje rtl:font-almarai text-lg   text-gray-400 lg:w-[15%]">
                   {t("shift")}
                 </TableHead>
+                {showDeleteAction && (
+                  <TableHead className="text-center w-[200px]"></TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -130,11 +139,29 @@ export default function DashTable({
                     <TableCell className="text-center font-homenaje rtl:font-almarai text-lg font-medium text-muted-foreground">
                       {job.shift_name}
                     </TableCell>
+                    {showDeleteAction && (
+                      <TableCell className="text-center">
+                        <DeleteDialog
+                          action={() => DeleteSyncJobAsync({ id: job.id })}
+                          description="Are you sure you want to delete this sync job? This action cannot be undone."
+                          title="Delete Sync Job"
+                          successMessage="Sync job deleted successfully!"
+                          errorMessage="Failed to delete sync job. Please try again."
+                        >
+                          <button className="">
+                            <HiMiniTrash className="text-black text-2xl" />
+                          </button>
+                        </DeleteDialog>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell
+                    colSpan={showDeleteAction ? 7 : 6}
+                    className="text-center py-8"
+                  >
                     <p className="text-muted-foreground">
                       {t("noSyncJobsFound")}
                     </p>

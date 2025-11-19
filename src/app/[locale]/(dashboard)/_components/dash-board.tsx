@@ -54,7 +54,7 @@ export default function DashBoard({
         <CardSection syncJobsStats={homeStates} />
         {/* <ChartsSectoin syncJobsStats={homeStates} /> */}
         <BranchesLastSyncTable rows={branchesLastSync} />
-        <DashTable syncJobs={homeStates.jobs} />
+        <DashTable syncJobs={homeStates.jobs} showDeleteAction={true} />
       </div>
     </div>
   );

@@ -31,10 +31,10 @@ export const authOptions: NextAuthOptions = {
         console.log(response);
         const payload: APIResponse<customAdmin> = await response.json();
         // Throw an auth error if the login has failed
-        if (!payload.success) {
-          throw new Error(payload.message);
+        if (!response.ok || !payload.success) {
+          console.error("Login failed:", payload.message);
+          return null;
         }
-
         const successPayload = payload as SuccessfulResponse<customAdmin>;
         console.log(successPayload);
         // Return the user object that matches the User interface
